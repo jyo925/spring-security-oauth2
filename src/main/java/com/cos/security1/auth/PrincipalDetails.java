@@ -11,19 +11,45 @@ package com.cos.security1.auth;
 // Security Session -> Authentication -> UserDetails
 
 import com.cos.security1.model.User;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
-public class PrincipleDetails implements UserDetails {
+@Data
+public class PrincipalDetails implements UserDetails, OAuth2User {
 
     private User user; //콤포지션
+    private Map<String, Object> attributes;
 
-    public PrincipleDetails(User user) {
+    //일반 로그인 생성자
+    public PrincipalDetails(User user) {
         this.user = user;
     }
+
+    //OAuth 로그인 생성자
+    public PrincipalDetails(User user, Map<String, Object> attributes) {
+        this.user = user;
+        this.attributes = attributes;
+    }
+
+    //OAuth2User
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    //OAuth2User
+    @Override
+    public String getName() {
+        return null; //안씀
+    }
+
+
 
     //해당 유저 권한 리턴
     @Override
@@ -70,4 +96,6 @@ public class PrincipleDetails implements UserDetails {
         //현재 시간 - 마지막 로그인 시간 등...
         return true;
     }
+
+
 }
