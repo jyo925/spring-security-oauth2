@@ -18,7 +18,6 @@ target/
 *.iws
 *.iml
 *.ipr
-local.properties
 local.yml
 
 ### NetBeans ###
