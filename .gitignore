@@ -15,12 +15,17 @@ target/
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.idea
-*.iws
+.idea/
+projectName.iml
+/*.classpath
+/.classpath
+/.springBeans
+*.DS_Store
 *.iml
-*.ipr
-*.yml
-application.yml
+/build
+/local.properties
+/local.yml
+target/
 
 
 ### NetBeans ###
@@ -35,3 +40,4 @@ build/
 
 ### VS Code ###
 .vscode/
+!/src/main/resources/application.yml
