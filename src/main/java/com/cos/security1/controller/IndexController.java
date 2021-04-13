@@ -27,7 +27,6 @@ public class IndexController {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-
     //일반 로그인
     //파라미터를 UserDetails 말고도 PrincipalDetails로 받아도 됨
     //구글 로그인 시 cannot be cast to com.cos.security1.auth.PrincipalDetails 에러 발생 -> 수정 필요
@@ -35,10 +34,8 @@ public class IndexController {
     public @ResponseBody
     String testLogin(Authentication authentication,
                      @AuthenticationPrincipal UserDetails userDetails) {
-        log.info("/test/login ========================");
 
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-
         log.info("authentication: " + principalDetails.getUser());
         log.info("userDetails: " + userDetails.getUsername());
 
@@ -51,19 +48,26 @@ public class IndexController {
     public @ResponseBody
     String testLogin(Authentication authentication,
                      @AuthenticationPrincipal OAuth2User oAuth) {
-        log.info("/test/login ========================");
 
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
 //        PrincipalOauth2UserService의 OAuth2User oAuth2User = super.loadUser(userRequest);랑 같은 정보임
         log.info("oAuth2User: " + oAuth2User.getAttributes());
         log.info("authentication: " + authentication.getPrincipal());
-
         log.info("oauth: " + oAuth.getAttributes());
         return "세션 정보 확인하기";
-
     }
 
+
+    //일반 & OAuth 로그인 통합 수정
+    //@AuthenticationPrincipal를 사용하면 
+    //UserDetailsService(loadUserByUsername())에서 리턴한 객체를 컨트롤러의 파라미터로 직접 참조 가능
+    @GetMapping("/user")
+    public @ResponseBody
+    String user(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        log.info("principalDetails: " + principalDetails.getUser());
+        return "user";
+    }
 
 
     @GetMapping({"", "/"})
@@ -71,7 +75,11 @@ public class IndexController {
         return "index";
     }
 
-    //스프링 시큐리티가 해당 주소를 낚아챔 -> SecurityConfig 생성하면 작동 안 함
+    @GetMapping("/login")
+    public String login() {
+        return "loginForm";
+    }
+
     @GetMapping("/loginForm")
     public String loginForm() {
         return "loginForm";
@@ -82,29 +90,19 @@ public class IndexController {
         return "joinForm";
     }
 
-    //실제 회원가입 처리
+    //실제 회원 가입 처리
     @PostMapping("/join")
     public String join(User user) {
         log.info(user + "");
         user.setRole("ROLE_USER");
         String rawPw = user.getPassword();
-        String encPw = bCryptPasswordEncoder.encode(rawPw);
+        String encPw = bCryptPasswordEncoder.encode(rawPw); //비밀번호 암호화
         user.setPassword(encPw);
-        userRepository.save(user); //회원가입 완료 -> 비밀번호 암호화 필요
+        userRepository.save(user); //회원가입 완료
 
         return "redirect:/loginForm";
     }
-
-    //일반 & 구글로그인 통합 수정
-    //@AuthenticationPrincipal 를 사용하여 UserDetailsService에서 리턴한 객체를 컨트롤러의 파라메터로 직접 참조할 수 있다.
-    @GetMapping("/user")
-    public @ResponseBody
-    String user(@AuthenticationPrincipal PrincipalDetails principalDetails) {
-        log.info("principalDetails: " + principalDetails.getUser());
-        return "user";
-    }
-
-
+    
     @GetMapping("/admin")
     public @ResponseBody
     String admin() {

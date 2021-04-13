@@ -15,7 +15,6 @@ import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -37,13 +36,13 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
         this.attributes = attributes;
     }
 
-    //OAuth2User
+    //OAuth2User 메서드
     @Override
     public Map<String, Object> getAttributes() {
         return attributes;
     }
 
-    //OAuth2User
+    //OAuth2User 메서드
     @Override
     public String getName() {
         return null; //안씀
@@ -91,7 +90,6 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
 
     @Override
     public boolean isEnabled() {
-
         //1년 동안 로그인 이력이 없으면 휴면 계정으로 등록 -> false 반환
         //현재 시간 - 마지막 로그인 시간 등...
         return true;
