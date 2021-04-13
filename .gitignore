@@ -21,7 +21,6 @@ target/
 *.ipr
 *.yml
 application.yml
-out
 
 
 ### NetBeans ###
